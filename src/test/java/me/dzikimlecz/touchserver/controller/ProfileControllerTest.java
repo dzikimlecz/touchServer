@@ -36,7 +36,7 @@ class ProfileControllerTest {
     void postProfileTest() {
         // when/then
         assertDoesNotThrow(
-                () -> profileController.postProfile(new UserProfile("username", 0))
+                () -> profileController.postProfile(UserProfile.of("username", 1))
         );
     }
 
@@ -44,7 +44,7 @@ class ProfileControllerTest {
     @DisplayName("Should throw on posting already posted profile")
     void postExistingProfileTest() {
         // given
-        final var userProfile = new UserProfile("username", 0);
+        final var userProfile = UserProfile.of("username", 1);
         // when
         profileController.postProfile(userProfile);
         // then
@@ -58,7 +58,7 @@ class ProfileControllerTest {
     @DisplayName("Should delete existing profile profile")
     void deleteProfileTest() {
         // given
-        final var userProfile = new UserProfile("username", 0);
+        final var userProfile = UserProfile.of("username", 1);
         // when
         profileController.postProfile(userProfile);
         // then
@@ -71,7 +71,7 @@ class ProfileControllerTest {
     @DisplayName("Should throw on deleting absent profile")
     void deleteAbsentProfileTest() {
         // when
-        final var userProfile = new UserProfile("username", 0);
+        final var userProfile = UserProfile.of("username", 1);
         // then
         assertThrows(
                 NoSuchElementException.class,

@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 public class ProfileController {
 
     private final List<UserProfile> mockUserSource = new ArrayList<>();
-    public ProfileController() { mockUserSource.add(new UserProfile("username", 0)); }
+    public ProfileController() { mockUserSource.add(UserProfile.of("username", 1)); }
 
     public List<UserProfile> getProfiles() {
         return List.copyOf(mockUserSource);
