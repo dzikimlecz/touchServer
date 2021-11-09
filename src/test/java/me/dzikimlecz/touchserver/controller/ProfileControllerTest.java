@@ -32,6 +32,28 @@ class ProfileControllerTest {
     }
 
     @Test
+    @DisplayName("Should get profile of specified name and tag")
+    void getSpecificProfileTest() {
+        // given
+        final var username = "UserName";
+        final var tag = 100;
+        final var profile = UserProfile.of(username, tag);
+        // when
+        profileController.postProfile(profile);
+        // then
+        assertEquals(profile, profileController.getProfile(username + '#' + tag));
+    }
+
+    @Test
+    @DisplayName("Should fail to get profile of non-existent NameTag")
+    void getNonExistentProfileTest() {
+        assertThrows(
+                NoSuchElementException.class,
+                () -> profileController.getProfile("Hello#2")
+        );
+    }
+
+    @Test
     @DisplayName("Should not throw on posting profile")
     void postProfileTest() {
         // when/then
