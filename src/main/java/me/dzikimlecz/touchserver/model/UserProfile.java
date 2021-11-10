@@ -72,4 +72,8 @@ public final class UserProfile {
     public String toString() {
         return String.format("UserProfile{username='%s', userTag=%d}", username, userTag);
     }
+
+    public String getNameTag() {
+        return username + '#' + userTag;
+    }
 }
