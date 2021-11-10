@@ -19,8 +19,8 @@ public class ProfileController {
 
     public UserProfile getProfile(String nameTag) {
         final var nameTagArr = nameTag.split("#");
-        final var username = getUsername(nameTagArr);
-        final long tag = parseTag(nameTagArr);
+        final var username = UserProfile.getUsername(nameTagArr);
+        final long tag = UserProfile.parseTag(nameTagArr[1]);
 
         for (UserProfile userProfile : mockUserSource)
             if (tag == userProfile.getUserTag() && username.equals(userProfile.getUsername()))
@@ -40,29 +40,7 @@ public class ProfileController {
         throw new NoSuchElementException();
     }
 
-    private String getUsername(String[] nameTagArr) {
-        switch (nameTagArr.length) {
-            case 0:
-                throw new IllegalArgumentException("NameTag can't be empty.");
-            case 1:
-                throw new IllegalArgumentException("'" + nameTagArr[0] + "' is not a valid NameTag.");
-            case 2:
-                return nameTagArr[0];
-            default:
-                throw new IllegalArgumentException(String.join("#", nameTagArr) + " is not a valid NameTag.");
-        }
-    }
 
-    private long parseTag(String[] nameTagArr) {
-        final long tag;
-        try {
-            tag = Long.parseLong(nameTagArr[1]);
-            if (tag == 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("'" + nameTagArr[1] + "' is not a valid tag.");
-        }
-        return tag;
-    }
 
 
 }
