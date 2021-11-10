@@ -31,7 +31,7 @@ public class ProfileController {
 
     public void postProfile(UserProfile userProfile) {
         if (mockUserSource.contains(userProfile))
-            throw new ElementAlreadyExistException();
+            throw new ElementAlreadyExistException(userProfile.toString() + " already exists.");
         mockUserSource.add(userProfile);
     }
 
