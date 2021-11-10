@@ -1,12 +1,15 @@
 package me.dzikimlecz.touchserver.model;
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public final class UserProfile {
-    public static UserProfile of(@NotNull String username, long userTag) {
+
+    @Contract("_, _ -> new")
+    public static @NotNull UserProfile of(@NotNull String username, long userTag) {
         if (username.isEmpty())
             throw new IllegalArgumentException("Username can't be empty.");
         if (userTag == 0)
@@ -14,7 +17,7 @@ public final class UserProfile {
         return new UserProfile(username, userTag);
     }
 
-    public static String getUsername(String[] nameTagArr) {
+    public static String getUsername(String @NotNull [] nameTagArr) {
         switch (nameTagArr.length) {
             case 0:
                 throw new IllegalArgumentException("NameTag can't be empty.");
@@ -27,7 +30,7 @@ public final class UserProfile {
         }
     }
 
-    public static long parseTag(String tagString) {
+    public static long parseTag(@NotNull String tagString) {
         final long tag;
         try {
             tag = Long.parseLong(tagString);
@@ -69,11 +72,13 @@ public final class UserProfile {
     }
 
     @Override
+    @Contract(pure = true)
     public String toString() {
         return String.format("UserProfile{username='%s', userTag=%d}", username, userTag);
     }
 
-    public String getNameTag() {
+    @Contract(pure = true)
+    public @NotNull String getNameTag() {
         return username + '#' + userTag;
     }
 }
