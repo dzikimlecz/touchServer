@@ -14,17 +14,17 @@ import static java.util.stream.Collectors.*;
 import static me.dzikimlecz.touchserver.model.UserProfile.getUsername;
 import static me.dzikimlecz.touchserver.model.UserProfile.parseTag;
 
-//@Controller
-//@RequestMapping("/touch/msg/")
+@Controller
+@RequestMapping("/touch/msg/")
 public class MessageController {
     private final List<Message> mockMessagesSource = new ArrayList<>();
 
-//    @GetMapping
+    @GetMapping
     public List<Message> fetchMessages() {
         return List.copyOf(mockMessagesSource);
     }
 
-//    @GetMapping("/{nameTag}")
+    @GetMapping("/{nameTag}")
     public List<Message> fetchMessagesTo(@PathVariable String nameTag) {
         final var nameTagArr = nameTag.split("#");
         final var username = getUsername(nameTagArr);
@@ -36,15 +36,15 @@ public class MessageController {
                 ));
     }
 
-//    @PostMapping
-    public void sendMessage(Message msg) {
+    @PostMapping
+    public void sendMessage(@RequestBody Message msg) {
         if (mockMessagesSource.contains(msg))
             throw new ElementAlreadyExistException();
         mockMessagesSource.add(msg);
     }
 
-//    @DeleteMapping
-    public void dropMessage(Message msg) {
+    @DeleteMapping
+    public void dropMessage(@RequestBody Message msg) {
         if(mockMessagesSource.remove(msg)) return;
         throw new NoSuchElementException();
     }
