@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
+import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessageControllerTest {
@@ -30,7 +31,7 @@ class MessageControllerTest {
         final var sender = UserProfile.of("sender", 1);
         final var recipient = UserProfile.of("recipient", 1);
         // When
-        final var msg = new Message(sender, recipient, "Come over.");
+        final var msg = new Message(sender, recipient, "Come over.", now());
         // Then
         assertDoesNotThrow(() -> messageController.sendMessage(msg));
     }
@@ -41,7 +42,7 @@ class MessageControllerTest {
         // Given
         final var sender = UserProfile.of("sender", 1);
         final var recipient = UserProfile.of("recipient", 1);
-        final var msg = new Message(sender, recipient, "Come over.");
+        final var msg = new Message(sender, recipient, "Come over.", now());
         // When
         messageController.sendMessage(msg);
         // Then
@@ -56,7 +57,7 @@ class MessageControllerTest {
         // given
         final var sender = UserProfile.of("sender", 1);
         final var recipient = UserProfile.of("recipient", 1);
-        final var msg = new Message(sender, recipient, "Come over.");
+        final var msg = new Message(sender, recipient, "Come over.", now());
         // when
         messageController.sendMessage(msg);
         final var response = messageController.fetchMessages();
@@ -70,7 +71,7 @@ class MessageControllerTest {
         // Given
         final var sender = UserProfile.of("sender", 1);
         final var recipient = UserProfile.of("recipient", 1);
-        final var msg = new Message(sender, recipient, "Come over.");
+        final var msg = new Message(sender, recipient, "Come over.", now());
         // When
         messageController.sendMessage(msg);
         // Then
@@ -85,7 +86,7 @@ class MessageControllerTest {
         final var recipient = UserProfile.of("recipient", 1);
         // When/Then
         assertThrows(NoSuchElementException.class, () ->
-                messageController.dropMessage(new Message(sender, recipient, "Come over."))
+                messageController.dropMessage(new Message(sender, recipient, "Come over.", now()))
         );
     }
 
@@ -95,8 +96,8 @@ class MessageControllerTest {
         // Given
         final var sender = UserProfile.of("sender", 1);
         final var recipient = UserProfile.of("recipient", 1);
-        final var msg1 = new Message(sender, recipient, "Come over.");
-        final var msg2 = new Message(recipient, sender, "I can't. I'm playing League Of Legends");
+        final var msg1 = new Message(sender, recipient, "Come over.", now());
+        final var msg2 = new Message(recipient, sender, "I can't. I'm playing League Of Legends", now());
         // When
         messageController.sendMessage(msg1);
         messageController.sendMessage(msg2);
