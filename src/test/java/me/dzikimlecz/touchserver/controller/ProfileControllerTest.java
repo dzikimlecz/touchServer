@@ -41,7 +41,7 @@ class ProfileControllerTest {
         // when
         profileController.postProfile(profile);
         // then
-        assertEquals(profile, profileController.getProfile(username + '#' + tag));
+        assertEquals(profile, profileController.getProfile(username + '_' + tag));
     }
 
     @Test
@@ -49,7 +49,7 @@ class ProfileControllerTest {
     void getNonExistentProfileTest() {
         assertThrows(
                 NoSuchElementException.class,
-                () -> profileController.getProfile("Hello#2")
+                () -> profileController.getProfile("Hello_2")
         );
     }
 
