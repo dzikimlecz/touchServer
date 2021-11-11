@@ -6,6 +6,7 @@ gradle-wrapper.jar
 !**/src/test/**/build/
 gradlew
 gradlew.bat
+application.properties
 
 ### STS ###
 .apt_generated
