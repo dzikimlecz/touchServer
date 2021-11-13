@@ -1,31 +1,36 @@
 package me.dzikimlecz.touchserver.model.database.entities;
 
 
+import me.dzikimlecz.touchserver.model.Message;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
 public class MessageEntity {
-    private Long id;
-    private Long senderId;
-    private Long recipientId;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private @Id Integer id;
+    private Integer senderId;
+    private Integer recipientId;
     private String content;
     private LocalDateTime sentOn;
 
-    public Long getSenderId() {
+    public Integer getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(Long senderId) {
+    public void setSenderId(Integer senderId) {
         this.senderId = senderId;
     }
 
-    public Long getRecipientId() {
+    public Integer getRecipientId() {
         return recipientId;
     }
 
-    public void setRecipientId(Long recipientId) {
+    public void setRecipientId(Integer recipientId) {
         this.recipientId = recipientId;
     }
 
@@ -45,14 +50,22 @@ public class MessageEntity {
         this.sentOn = sentOn;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Id
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
     public MessageEntity() {}
+
+    public static MessageEntity create(Message msg, Integer senderId, Integer recipientId) {
+        final var entity = new MessageEntity();
+        entity.content = msg.getContent();
+        entity.recipientId = recipientId;
+        entity.senderId = senderId;
+        entity.sentOn = msg.getSentOn();
+        return entity;
+    }
 }

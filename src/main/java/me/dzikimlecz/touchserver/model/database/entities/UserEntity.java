@@ -5,11 +5,14 @@ import me.dzikimlecz.touchserver.model.UserProfile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class UserEntity {
-    private Long id;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private @Id Integer id;
     private String username;
     private long userTag;
 
@@ -29,12 +32,11 @@ public class UserEntity {
         this.userTag = userTag;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Id
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -43,5 +45,16 @@ public class UserEntity {
     public UserEntity(@NotNull UserProfile profile) {
         setUsername(profile.getUsername());
         setUserTag(profile.getUserTag());
+    }
+
+    public UserProfile asProfile() {
+        return UserProfile.of(username, userTag);
+    }
+
+    public static UserEntity create(UserProfile profile) {
+        final var entity = new UserEntity();
+        entity.username = profile.getUsername();
+        entity.userTag = profile.getUserTag();
+        return entity;
     }
 }
