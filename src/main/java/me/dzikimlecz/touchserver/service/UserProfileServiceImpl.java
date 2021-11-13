@@ -6,6 +6,7 @@ import me.dzikimlecz.touchserver.model.database.UserRepository;
 import me.dzikimlecz.touchserver.model.database.entities.UserEntity;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.NoSuchElementException;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Primary
 public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
 
@@ -80,7 +82,5 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void reset() {
         userRepository.deleteAll();
-        // todo: remove in production, only for testing reasons
-            userRepository.save(new UserEntity(UserProfile.of("username", 1)));
     }
 }

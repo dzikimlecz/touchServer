@@ -8,6 +8,7 @@ import me.dzikimlecz.touchserver.model.database.entities.MessageEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Primary
 public class MessageServiceImpl implements MessageService {
     private final MessagesRepository messagesRepository;
     private final UserProfileService userProfileService;
