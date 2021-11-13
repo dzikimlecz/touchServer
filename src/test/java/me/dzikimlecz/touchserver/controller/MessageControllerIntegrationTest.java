@@ -80,7 +80,9 @@ class MessageControllerIntegrationTest {
     @DisplayName("Should fail to send same message twice")
     public void sendSameMessageTwiceTest() throws Exception {
         // Given
-        final var msg = new Message(sender, recipient, "Come over.", now());
+        var now = now();
+        now = now.minus(now.getNano(), ChronoUnit.NANOS);
+        final var msg = new Message(sender, recipient, "Come over.", now);
         // When
         mockMvc.perform(post("/touch/msg")
                 .contentType(APPLICATION_JSON)

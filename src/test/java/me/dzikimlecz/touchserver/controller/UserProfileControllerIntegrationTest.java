@@ -31,6 +31,7 @@ public class UserProfileControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         controller.clear();
+        controller.postProfile(UserProfile.of("username", 1));
     }
 
     @Test
