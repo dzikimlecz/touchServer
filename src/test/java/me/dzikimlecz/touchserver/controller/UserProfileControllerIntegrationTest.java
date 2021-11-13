@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -16,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @AutoConfigureMockMvc
-@WebMvcTest(ProfileController.class)
-public class ProfileControllerIntegrationTest {
+@SpringBootTest
+public class UserProfileControllerIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
 
     @Autowired
-    protected ProfileController controller;
+    protected UserProfileController controller;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String uri = "/touch/profiles";
