@@ -1,79 +1,22 @@
 package me.dzikimlecz.touchserver.service;
 
-import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.UserProfile;
-import me.dzikimlecz.touchserver.model.database.UserRepository;
-import me.dzikimlecz.touchserver.model.database.entities.UserEntity;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.NoSuchElementException;
 
-import static java.util.stream.Collectors.toList;
+public interface UserProfileService {
+    Collection<UserProfile> getProfiles();
 
-@Service
-public class UserProfileService {
-    private final UserRepository userRepository;
+    UserProfile findById(Integer id);
 
-    @Autowired
-    public UserProfileService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserProfile findByNameTag(@NotNull String nameTag);
 
-    public Collection<UserProfile> getProfiles() {
-        return userRepository.findAll()
-                .parallelStream()
-                .map(UserEntity::asProfile)
-                .collect(toList());
-    }
+    void add(UserProfile profile);
 
-    public UserProfile findById(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No user of id: " + id)).asProfile();
-    }
+    UserProfile delete(UserProfile profile);
 
-    public UserProfile findByNameTag(@NotNull String nameTag) {
-        final var nameTagArr = nameTag.split("_");
-        final var username = UserProfile.getUsername(nameTagArr);
-        final var tag = UserProfile.parseTag(nameTagArr[1]);
-        final var entities = userRepository.findAll();
-        for (UserEntity entity : entities)
-            if (entity.getUserTag() == tag && entity.getUsername().equals(username))
-                return entity.asProfile();
-        throw new NoSuchElementException("No user of nameTag: " + nameTag);
-    }
+    Integer findId(UserProfile profile);
 
-    public void add(UserProfile profile) {
-        final var entities = userRepository.findAll();
-        for (UserEntity entity : entities)
-            if (entity.asProfile().equals(profile))
-                throw new ElementAlreadyExistException(profile + "\nis already registered");
-        userRepository.save(new UserEntity(profile));
-    }
-
-    public UserProfile delete(UserProfile profile) {
-        final var entities = userRepository.findAll();
-        for (UserEntity entity : entities) {
-            if (entity.asProfile().equals(profile)) {
-                userRepository.delete(entity);
-                return profile;
-            }
-        }
-        throw new NoSuchElementException(profile + "\nis not registered");
-    }
-
-    public Integer findId(UserProfile profile) {
-        final var entities = userRepository.findAll();
-        for (UserEntity entity : entities)
-            if (entity.asProfile().equals(profile))
-                return entity.getId();
-        throw new NoSuchElementException(profile + "\nis not registered");
-    }
-
-    public void reset() {
-        userRepository.deleteAll();
-        // todo: remove in production, only for testing reasons
-            userRepository.save(new UserEntity(UserProfile.of("username", 1)));
-    }
+    void reset();
 }
