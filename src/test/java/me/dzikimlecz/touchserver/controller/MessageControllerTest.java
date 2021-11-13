@@ -3,6 +3,7 @@ package me.dzikimlecz.touchserver.controller;
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.Message;
 import me.dzikimlecz.touchserver.model.UserProfile;
+import me.dzikimlecz.touchserver.service.MockMessagesService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MessageControllerTest {
 
-    private final MessageController messageController = new MessageController();
+    private final MessageController messageController = new MessageController(new MockMessagesService());
+
 
     @Test
     @DisplayName("Should get a list of messages")

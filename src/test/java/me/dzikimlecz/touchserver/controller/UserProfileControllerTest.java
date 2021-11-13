@@ -2,6 +2,9 @@ package me.dzikimlecz.touchserver.controller;
 
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.UserProfile;
+import me.dzikimlecz.touchserver.model.database.entities.UserEntity;
+import me.dzikimlecz.touchserver.service.MockUserProfileService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +13,13 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class ProfileControllerTest {
-    final ProfileController profileController = new ProfileController();
+class UserProfileControllerTest {
+    final UserProfileController profileController = new UserProfileController(new MockUserProfileService());
+
+    @BeforeEach
+    void setUp() {
+        profileController.postProfile(UserProfile.of("username", 1));
+    }
 
     @Test
     @DisplayName("Gets any List")
@@ -41,7 +49,7 @@ class ProfileControllerTest {
         // when
         profileController.postProfile(profile);
         // then
-        assertEquals(profile, profileController.getProfile(username + '_' + tag));
+        assertEquals(profile, profileController.getProfile(profile.getNameTag()));
     }
 
     @Test
@@ -58,7 +66,7 @@ class ProfileControllerTest {
     void postProfileTest() {
         // when/then
         assertDoesNotThrow(
-                () -> profileController.postProfile(UserProfile.of("username", 1))
+                () -> profileController.postProfile(UserProfile.of("new", 1))
         );
     }
 
@@ -66,7 +74,7 @@ class ProfileControllerTest {
     @DisplayName("Should throw on posting already posted profile")
     void postExistingProfileTest() {
         // given
-        final var userProfile = UserProfile.of("username", 1);
+        final var userProfile = UserProfile.of("new", 1);
         // when
         profileController.postProfile(userProfile);
         // then
@@ -80,7 +88,7 @@ class ProfileControllerTest {
     @DisplayName("Should delete existing profile profile")
     void deleteProfileTest() {
         // given
-        final var userProfile = UserProfile.of("username", 1);
+        final var userProfile = UserProfile.of("new", 1);
         // when
         profileController.postProfile(userProfile);
         // then
@@ -93,7 +101,7 @@ class ProfileControllerTest {
     @DisplayName("Should throw on deleting absent profile")
     void deleteAbsentProfileTest() {
         // when
-        final var userProfile = UserProfile.of("username", 1);
+        final var userProfile = UserProfile.of("new", 1);
         // then
         assertThrows(
                 NoSuchElementException.class,
