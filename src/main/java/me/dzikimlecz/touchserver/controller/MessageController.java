@@ -2,26 +2,25 @@ package me.dzikimlecz.touchserver.controller;
 
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.Message;
-import me.dzikimlecz.touchserver.model.UserProfile;
-import org.springframework.http.HttpStatus;
+import me.dzikimlecz.touchserver.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import static java.util.stream.Collectors.*;
-import static me.dzikimlecz.touchserver.model.UserProfile.getUsername;
-import static me.dzikimlecz.touchserver.model.UserProfile.parseTag;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/touch/msg")
 public class MessageController {
-    private final List<Message> mockMessagesSource = new ArrayList<>();
+    private final MessageService messageService;
+
+    @Autowired
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> notfound(NoSuchElementException e) {
@@ -35,36 +34,26 @@ public class MessageController {
 
     @GetMapping
     public Collection<Message> fetchMessages() {
-        return List.copyOf(mockMessagesSource);
+        return messageService.fetchMessages();
     }
 
     @GetMapping("/{nameTag}")
     public Collection<Message> fetchMessagesTo(@PathVariable String nameTag) {
-        final var nameTagArr = nameTag.split("_");
-        final var username = getUsername(nameTagArr);
-        final long tag = parseTag(nameTagArr[1]);
-        final var profile = UserProfile.of(username, tag);
-        return mockMessagesSource.stream().collect(
-                filtering(msg -> msg.getRecipient().equals(profile),
-                        toList()
-                ));
+        return messageService.fetchMessagesTo(nameTag);
     }
 
     @PostMapping
     @ResponseStatus(CREATED)
     public void sendMessage(@RequestBody Message msg) {
-        if (mockMessagesSource.contains(msg))
-            throw new ElementAlreadyExistException("Msg: " + msg + "\nalready exists");
-        mockMessagesSource.add(msg);
+        messageService.save(msg);
     }
 
     @DeleteMapping
     public Message dropMessage(@RequestBody Message msg) {
-        if(mockMessagesSource.remove(msg)) return null;
-        throw new NoSuchElementException("Msg: " + msg + "\n does not exist");
+        return messageService.drop(msg);
     }
 
     protected void clear() {
-        mockMessagesSource.clear();
+        messageService.reset();
     }
 }
