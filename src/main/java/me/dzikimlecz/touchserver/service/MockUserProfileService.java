@@ -2,7 +2,9 @@ package me.dzikimlecz.touchserver.service;
 
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.UserProfile;
+import me.dzikimlecz.touchserver.model.container.Container;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,5 +56,10 @@ public class MockUserProfileService implements UserProfileService {
     @Override
     public void reset() {
         profiles.clear();
+    }
+
+    @Override
+    public Container<UserProfile> getProfilesPage(int page, int size) {
+        return null;
     }
 }

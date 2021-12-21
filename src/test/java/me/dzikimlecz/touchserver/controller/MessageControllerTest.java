@@ -21,7 +21,7 @@ class MessageControllerTest {
     @DisplayName("Should get a list of messages")
     void fetchMessagesTest() {
         // when
-        final var response = messageController.fetchMessages();
+        final var response = messageController.fetchAllMessages();
         // then
         assertNotNull(response);
     }
@@ -62,7 +62,7 @@ class MessageControllerTest {
         final var msg = new Message(sender, recipient, "Come over.", now());
         // when
         messageController.sendMessage(msg);
-        final var response = messageController.fetchMessages();
+        final var response = messageController.fetchAllMessages();
         // then
         assertTrue(response.contains(msg));
     }
@@ -104,7 +104,7 @@ class MessageControllerTest {
         messageController.sendMessage(msg1);
         messageController.sendMessage(msg2);
         final var response =
-                messageController.fetchMessagesTo(recipient.getNameTag());
+                messageController.fetchAllMessagesTo(recipient.getNameTag());
         // Then
         assertTrue(response.contains(msg1));
         assertFalse(response.contains(msg2));

@@ -3,6 +3,7 @@ package me.dzikimlecz.touchserver.service;
 
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.Message;
+import me.dzikimlecz.touchserver.model.container.Container;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,4 +46,15 @@ public class MockMessagesService implements MessageService {
     public void reset() {
         messages.clear();
     }
+
+    @Override
+    public Container<Message> retrieveMessagesTo(String nameTag, int page, int size) {
+        return null;
+    }
+
+    @Override
+    public Container<Message> retrieveMessagesPage(int page, int size) {
+        return null;
+    }
+
 }

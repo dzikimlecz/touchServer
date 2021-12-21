@@ -2,6 +2,7 @@ package me.dzikimlecz.touchserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.dzikimlecz.touchserver.model.UserProfile;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,11 @@ public class UserProfileControllerIntegrationTest {
     void setUp() {
         controller.clear();
         controller.postProfile(UserProfile.of("username", 1));
+    }
+
+    @AfterEach
+    void tearDown() {
+        controller.clear();
     }
 
     @Test

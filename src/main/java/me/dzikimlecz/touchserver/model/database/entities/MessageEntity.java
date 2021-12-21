@@ -2,6 +2,8 @@ package me.dzikimlecz.touchserver.model.database.entities;
 
 
 import me.dzikimlecz.touchserver.model.Message;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-public class MessageEntity {
+public class MessageEntity implements Comparable<MessageEntity> {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private @Id Integer id;
     private Integer senderId;
@@ -60,12 +62,20 @@ public class MessageEntity {
 
     public MessageEntity() {}
 
-    public static MessageEntity create(Message msg, Integer senderId, Integer recipientId) {
+    @Contract("_, _, _ -> new")
+    public static @NotNull MessageEntity create(Message msg, Integer senderId, Integer recipientId) {
         final var entity = new MessageEntity();
-        entity.content = msg.getContent();
+        if (msg != null) {
+            entity.content = msg.getContent();
+            entity.sentOn = msg.getSentOn().minusNanos(msg.getSentOn().getNano());
+        }
         entity.recipientId = recipientId;
         entity.senderId = senderId;
-        entity.sentOn = msg.getSentOn();
         return entity;
+    }
+
+    @Override
+    public int compareTo(@NotNull MessageEntity o) {
+        return -sentOn.compareTo(o.sentOn);
     }
 }

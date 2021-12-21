@@ -2,14 +2,17 @@ package me.dzikimlecz.touchserver.controller;
 
 import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.Message;
+import me.dzikimlecz.touchserver.model.container.Container;
 import me.dzikimlecz.touchserver.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -23,22 +26,40 @@ public class MessageController {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> notfound(NoSuchElementException e) {
+    public ResponseEntity<String> notFound(NoSuchElementException e) {
         return new ResponseEntity<>(e.getMessage(), NOT_FOUND);
     }
 
     @ExceptionHandler(ElementAlreadyExistException.class)
-    public ResponseEntity<String> notfound(ElementAlreadyExistException e) {
+    public ResponseEntity<String> alreadyExists(ElementAlreadyExistException e) {
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
-    @GetMapping
-    public Collection<Message> fetchMessages() {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> badRequest(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
+    }
+
+    @GetMapping("/all")
+    public Collection<Message> fetchAllMessages() {
         return messageService.fetchMessages();
     }
 
     @GetMapping("/{nameTag}")
-    public Collection<Message> fetchMessagesTo(@PathVariable String nameTag) {
+    public Container<Message> fetchMessagesTo(
+            @PathVariable String nameTag,
+            @RequestParam int page,
+            @RequestParam int size
+    )  {
+        if (size <= 0)
+            throw new IllegalArgumentException(format("Can't construct page of size: %d", size));
+        if (page < 0)
+            throw new IllegalArgumentException(format("Can't construct page of negative index: %d", page));
+        return messageService.retrieveMessagesTo(nameTag, page, size);
+    }
+
+    @GetMapping("/all/{nameTag}")
+    public Collection<Message> fetchAllMessagesTo(@PathVariable String nameTag) {
         return messageService.fetchMessagesTo(nameTag);
     }
 

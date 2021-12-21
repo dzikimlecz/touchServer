@@ -1,22 +1,25 @@
 package me.dzikimlecz.touchserver.service;
 
-import me.dzikimlecz.touchserver.model.ElementAlreadyExistException;
 import me.dzikimlecz.touchserver.model.Message;
 import me.dzikimlecz.touchserver.model.UserProfile;
+import me.dzikimlecz.touchserver.model.container.Container;
+import me.dzikimlecz.touchserver.model.container.MessageContainer;
 import me.dzikimlecz.touchserver.model.database.MessagesRepository;
 import me.dzikimlecz.touchserver.model.database.entities.MessageEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+import static me.dzikimlecz.touchserver.model.container.MessageContainer.wrapPage;
+import static org.springframework.data.domain.ExampleMatcher.matchingAny;
+import static org.springframework.data.domain.Sort.sort;
 
 @Service
 @Primary
@@ -41,14 +44,15 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Collection<Message> fetchMessagesTo(String nameTag) {
-        UserProfile recipient = userProfileService.findByNameTag(nameTag);
-        return fetchMessages().stream().filter(msg -> msg.getRecipient().equals(recipient)).collect(toList());
+        var id = userProfileService.findId(userProfileService.findByNameTag(nameTag));
+        return messagesRepository.findAll(Example.of(MessageEntity.create(null, null, id), matchingAny()))
+                .stream().map(this::getMessageOrDelete)
+                .filter(Objects::nonNull)
+                .collect(toList());
     }
 
     @Override
     public void save(Message msg) {
-        if (alreadySaved(msg))
-            throw new ElementAlreadyExistException("Msg: " + msg + "\nalready exists");
         messagesRepository.save(getEntity(msg));
     }
 
@@ -71,6 +75,23 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void reset() {
         messagesRepository.deleteAll();
+    }
+
+    @Override
+    public Container<Message> retrieveMessagesTo(String nameTag, int page, int size) {
+        final Integer id = userProfileService.findId(userProfileService.findByNameTag(nameTag));
+        final var messageEntities = messagesRepository
+                .findByRecipientId(id, PageRequest.of(page, size, sort(MessageEntity.class)))
+                .map(this::getMessageOrDelete);
+        return wrapPage(messageEntities);
+    }
+
+    @Override
+    public Container<Message> retrieveMessagesPage(int page, int size) {
+        return wrapPage(
+                messagesRepository.findAll(PageRequest.of(page, size, sort(MessageEntity.class)))
+                .map(this::getMessageOrDelete)
+        );
     }
 
     @NotNull
