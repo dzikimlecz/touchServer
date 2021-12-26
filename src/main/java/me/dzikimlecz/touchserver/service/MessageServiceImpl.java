@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.lang.Math.ceil;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static me.dzikimlecz.touchserver.model.container.MessageContainer.wrapPage;
 import static org.springframework.data.domain.ExampleMatcher.matchingAny;
@@ -92,6 +94,37 @@ public class MessageServiceImpl implements MessageService {
                 messagesRepository.findAll(PageRequest.of(page, size, sort(MessageEntity.class)))
                 .map(this::getMessageOrDelete)
         );
+    }
+
+    @Override
+    public Container<Message> retrieveMessagesOfUsers(String user1, String user2, int page, int size) {
+        var id1 = userProfileService.findId(userProfileService.findByNameTag(user1));
+        var id2 = userProfileService.findId(userProfileService.findByNameTag(user2));
+        var resultPage1 =
+                messagesRepository.findByRecipientIdAndSenderId(id1, id2, PageRequest.of(page, size))
+                        .map(this::getMessageOrDelete).getContent();
+        var resultPage2 =
+                messagesRepository.findByRecipientIdAndSenderId(id2, id1, PageRequest.of(page, size))
+                        .map(this::getMessageOrDelete).getContent();
+        final var size1 = resultPage1.size();
+        final var size2 = resultPage2.size();
+        List<Message> resultList = new ArrayList<>();
+        var halfSize = (int) ceil(size / 2.0);
+        if (size1 >= halfSize && size2 >= halfSize) {
+            resultList.addAll(resultPage1.subList(0, halfSize));
+            resultList.addAll(resultPage2.subList(0, halfSize));
+        } else if (size1 < halfSize && size2 < halfSize) {
+            resultList.addAll(resultPage1);
+            resultList.addAll(resultPage2);
+        } else if (size1 >= halfSize) {
+            resultList.addAll(resultPage1.subList(0, (2 * halfSize) - size2));
+            resultList.addAll(resultPage2);
+        } else {
+            resultList.addAll(resultPage1);
+            resultList.addAll(resultPage2.subList(0, (2 * halfSize) - size1));
+        }
+        if (resultList.size() > size) resultList = resultList.subList(0, size);
+        return new MessageContainer(page, size, resultList);
     }
 
     @NotNull

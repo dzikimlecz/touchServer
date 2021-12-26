@@ -58,6 +58,20 @@ public class MessageController {
         return messageService.retrieveMessagesTo(nameTag, page, size);
     }
 
+    @GetMapping()
+    public Container<Message> fetchMessagesBetween(
+            @RequestParam String user1,
+            @RequestParam String user2,
+            @RequestParam int page,
+            @RequestParam int size
+    )  {
+        if (size <= 0)
+            throw new IllegalArgumentException(format("Can't construct page of size: %d", size));
+        if (page < 0)
+            throw new IllegalArgumentException(format("Can't construct page of negative index: %d", page));
+        return messageService.retrieveMessagesOfUsers(user1, user2, page, size);
+    }
+
     @GetMapping("/all/{nameTag}")
     public Collection<Message> fetchAllMessagesTo(@PathVariable String nameTag) {
         return messageService.fetchMessagesTo(nameTag);

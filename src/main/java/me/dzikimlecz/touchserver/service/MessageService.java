@@ -20,4 +20,6 @@ public interface MessageService {
     Container<Message> retrieveMessagesTo(String nameTag, int page, int size);
 
     Container<Message> retrieveMessagesPage(int page, int size);
+
+    Container<Message> retrieveMessagesOfUsers(String user1, String user2, int page, int size);
 }
