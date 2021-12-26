@@ -21,5 +21,5 @@ public interface MessageService {
 
     Container<Message> retrieveMessagesPage(int page, int size);
 
-    Container<Message> retrieveMessagesOfUsers(String user1, String user2, int page, int size);
+    Container<Message> retrieveConversation(String user1, String user2, int page, int size);
 }

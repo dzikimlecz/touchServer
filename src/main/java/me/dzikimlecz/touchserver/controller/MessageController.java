@@ -5,7 +5,6 @@ import me.dzikimlecz.touchserver.model.Message;
 import me.dzikimlecz.touchserver.model.container.Container;
 import me.dzikimlecz.touchserver.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +68,7 @@ public class MessageController {
             throw new IllegalArgumentException(format("Can't construct page of size: %d", size));
         if (page < 0)
             throw new IllegalArgumentException(format("Can't construct page of negative index: %d", page));
-        return messageService.retrieveMessagesOfUsers(user1, user2, page, size);
+        return messageService.retrieveConversation(user1, user2, page, size);
     }
 
     @GetMapping("/all/{nameTag}")

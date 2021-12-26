@@ -58,7 +58,7 @@ public class MockMessagesService implements MessageService {
     }
 
     @Override
-    public Container<Message> retrieveMessagesOfUsers(String user1, String user2, int page, int size) {
+    public Container<Message> retrieveConversation(String user1, String user2, int page, int size) {
         return null;
     }
 
